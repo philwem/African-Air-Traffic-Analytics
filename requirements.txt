@@ -1,0 +1,55 @@
+pandas
+requests
+sqlalchemy
+#pyodbc
+apache-airflow
+dbt-core
+#dbt-sqlserver
+streamlit
+pytest
+pymssql
+
+# Core Data Processing
+pandas==2.1.4
+numpy==1.26.2
+pyarrow==14.0.1
+
+# API & HTTP
+requests==2.31.0
+urllib3==2.1.0
+
+# Kafka Integration
+kafka-python==2.0.2
+
+# Configuration & Environment
+python-dotenv==1.0.0
+
+# Date/Time Processing
+python-dateutil==2.8.2
+
+# Geospatial (Optional - if using advanced geo features)
+# geopy==2.4.1
+# shapely==2.0.2
+
+# Logging & Monitoring
+loguru==0.7.2
+
+# Scheduling (for batch jobs)
+schedule==1.2.0
+APScheduler==3.10.4
+
+# Data Validation
+pydantic==2.5.2
+
+# Testing
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+
+# Code Quality
+black==23.12.1
+flake8==6.1.0
+mypy==1.7.1
+
+# Documentation
+sphinx==7.2.6

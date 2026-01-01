@@ -1,0 +1,136 @@
+version: '3.8'
+
+services:
+  # Zookeeper for Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-logs:/var/lib/zookeeper/log
+    networks:
+      - air-traffic-network
+
+  # Kafka Broker
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_RETENTION_HOURS: 168  # 7 days
+      KAFKA_LOG_SEGMENT_BYTES: 1073741824  # 1GB
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    networks:
+      - air-traffic-network
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Kafka UI for monitoring
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: air-traffic-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - air-traffic-network
+
+  # Streaming Ingestion Service
+  stream-ingester:
+    build:
+      context: ./ingestion
+      dockerfile: Dockerfile.stream
+    container_name: stream-ingester
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+      - ADSBEXCHANGE_API_KEY=${ADSBEXCHANGE_API_KEY}
+      - BRONZE_DATA_PATH=/data/bronze
+    volumes:
+      - ./data:/data
+      - ./ingestion:/app/ingestion
+      - ./logs:/app/logs
+    networks:
+      - air-traffic-network
+    restart: unless-stopped
+    command: python streaming_ingestion.py
+
+  # Batch Metadata Ingestion Service
+  batch-ingester:
+    build:
+      context: ./ingestion
+      dockerfile: Dockerfile.batch
+    container_name: batch-ingester
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+      - BRONZE_DATA_PATH=/data/bronze
+    volumes:
+      - ./data:/data
+      - ./ingestion:/app/ingestion
+      - ./logs:/app/logs
+    networks:
+      - air-traffic-network
+    restart: unless-stopped
+    command: python batch_ingestion.py
+
+  # Snapshot Ingestion Service (Hourly)
+  snapshot-ingester:
+    build:
+      context: ./ingestion
+      dockerfile: Dockerfile.batch
+    container_name: snapshot-ingester
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+      - ADSBEXCHANGE_API_KEY=${ADSBEXCHANGE_API_KEY}
+      - BRONZE_DATA_PATH=/data/bronze
+    volumes:
+      - ./data:/data
+      - ./ingestion:/app/ingestion
+      - ./logs:/app/logs
+    networks:
+      - air-traffic-network
+    restart: unless-stopped
+    command: python batch_ingestion.py snapshot
+
+volumes:
+  zookeeper-data:
+  zookeeper-logs:
+  kafka-data:
+
+networks:
+  air-traffic-network:
+    driver: bridge
