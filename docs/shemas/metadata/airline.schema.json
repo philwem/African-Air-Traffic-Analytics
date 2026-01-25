@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Airline/Operator Metadata (Canonical)",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["operator_icao"],
+  "properties": {
+    "operator_icao": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 3,
+      "description": "Airline/Operator ICAO code (preferred key)."
+    },
+    "operator_iata": {
+      "type": ["string", "null"],
+      "minLength": 2,
+      "maxLength": 2,
+      "description": "IATA airline code (optional)."
+    },
+    "operator_name": {
+      "type": ["string", "null"]
+    },
+    "country": {
+      "type": ["string", "null"]
+    },
+    "callsign": {
+      "type": ["string", "null"]
+    },
+    "website": {
+      "type": ["string", "null"]
+    },
+    "last_updated_utc": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "source": {
+      "type": ["string", "null"]
+    }
+  }
+}

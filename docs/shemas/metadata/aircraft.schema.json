@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Aircraft Metadata (Canonical)",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["aircraft_icao"],
+  "properties": {
+    "aircraft_icao": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{6}$",
+      "description": "ICAO24 hex identifier (6 hex chars)."
+    },
+    "registration": {
+      "type": ["string", "null"],
+      "description": "Tail number / registration (if available)."
+    },
+    "manufacturer": {
+      "type": ["string", "null"]
+    },
+    "model": {
+      "type": ["string", "null"],
+      "description": "Aircraft model (e.g., A320-214)."
+    },
+    "type_code": {
+      "type": ["string", "null"],
+      "description": "Aircraft type designator (e.g., A320, B738) if provided."
+    },
+    "icao_type": {
+      "type": ["string", "null"],
+      "description": "ICAO aircraft type (if provided by source)."
+    },
+    "operator_name": {
+      "type": ["string", "null"],
+      "description": "Operator/airline name if known."
+    },
+    "operator_icao": {
+      "type": ["string", "null"],
+      "description": "Operator ICAO code if known."
+    },
+    "country_of_registration": {
+      "type": ["string", "null"]
+    },
+    "last_updated_utc": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "source": {
+      "type": ["string", "null"],
+      "description": "Metadata source identifier (e.g., adsbdb, ourairports)."
+    }
+  }
+}

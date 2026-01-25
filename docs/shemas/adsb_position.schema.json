@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/adsb_position.schema.json",
+  "title": "ADS-B Position Message (Canonical)",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "event_timestamp_utc",
+    "source",
+    "aircraft_icao",
+    "latitude_deg",
+    "longitude_deg"
+  ],
+  "properties": {
+    "event_timestamp_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of the observation in UTC (ISO 8601)."
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Data provider/source identifier (e.g., opensky, adsbexchange)."
+    },
+    "aircraft_icao": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{6}$",
+      "description": "ICAO24 hex identifier (6 hex chars)."
+    },
+
+    "callsign": {
+      "type": ["string", "null"],
+      "maxLength": 16,
+      "description": "Flight callsign/identifier if available."
+    },
+
+    "latitude_deg": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90,
+      "description": "Latitude in decimal degrees."
+    },
+    "longitude_deg": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180,
+      "description": "Longitude in decimal degrees."
+    },
+
+    "altitude_m": {
+      "type": ["number", "null"],
+      "minimum": -500,
+      "maximum": 20000,
+      "description": "Geometric altitude in meters, if available."
+    },
+    "baro_altitude_m": {
+      "type": ["number", "null"],
+      "minimum": -500,
+      "maximum": 20000,
+      "description": "Barometric altitude in meters, if available."
+    },
+
+    "ground_speed_mps": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 400,
+      "description": "Ground speed in meters per second."
+    },
+    "track_deg": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 360,
+      "description": "True track in degrees."
+    },
+    "vertical_rate_mps": {
+      "type": ["number", "null"],
+      "minimum": -150,
+      "maximum": 150,
+      "description": "Vertical rate in meters per second."
+    },
+
+    "on_ground": {
+      "type": ["boolean", "null"],
+      "description": "Whether the aircraft is on the ground."
+    },
+
+    "squawk": {
+      "type": ["string", "null"],
+      "pattern": "^[0-7]{4}$",
+      "description": "4-digit octal transponder squawk code."
+    },
+
+    "aircraft_category": {
+      "type": ["string", "null"],
+      "description": "Optional aircraft category/type if provided by source."
+    },
+
+    "receiver_timestamp_utc": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Timestamp when your system ingested/received the message."
+    },
+
+    "geo": {
+      "type": ["object", "null"],
+      "description": "Optional nested geo representation for downstream geospatial tools.",
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string", "enum": ["Point"] },
+        "coordinates": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": { "type": "number" },
+          "description": "[longitude, latitude, (optional altitude_m)]"
+        }
+      }
+    }
+  }
+}
