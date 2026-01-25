@@ -1,0 +1,8 @@
+{
+  "provider": "opensky",
+  "endpoint": "https://opensky-network.org/api/states/all",
+  "timeout_seconds": 30,
+  "poll_interval_seconds": 10,
+  "output_path": "lake/bronze/adsb/opensky/",
+  "write_format": "jsonl"
+}

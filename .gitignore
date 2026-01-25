@@ -1,0 +1,43 @@
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Secrets / Local configs ---
+*.env
+.env
+secrets/
+**/secrets*.json
+**/*apikey*
+**/*api_key*
+
+# --- Data Lake / Generated Data (DO NOT COMMIT) ---
+lake/
+data/
+*.parquet
+*.jsonl
+*.log
+
+# If you want to keep empty folder structure under lake/, use .gitkeep files instead.
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Temporary files ---
+*.tmp
+*.temp

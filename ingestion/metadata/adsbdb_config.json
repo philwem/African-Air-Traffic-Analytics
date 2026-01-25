@@ -1,0 +1,9 @@
+{
+  "provider": "adsbdb",
+  "base_url": "https://api.adsbdb.com",
+  "aircraft_lookup_path": "/v0/aircraft/{icao24}",
+  "api_key": "",
+  "timeout_seconds": 30,
+  "max_requests": 200,
+  "output_path": "lake/bronze/metadata/adsbdb/aircraft/"
+}
