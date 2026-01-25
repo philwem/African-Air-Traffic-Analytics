@@ -108,7 +108,7 @@ The African Air Traffic DataHouse & Analytics Platform is a data engineering and
 **Format:**
 
 ```
-air-traffic-datahouse
+African-Air-Traffic-Datahouse-Analytics
 ```
 
 ---
